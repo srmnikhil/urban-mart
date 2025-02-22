@@ -5,8 +5,8 @@ import { useNavigation, useRoute } from "@react-navigation/native"; // Navigatio
 import { useFocusEffect } from "@react-navigation/native"; // Detect focus
 
 export default function BottomNav() {
-  const navigation = useNavigation();
-  const route = useRoute(); // Get current route
+  // const navigation = useNavigation();
+  // const route = useRoute(); // Get current route
   const [activeTab, setActiveTab] = useState("Home"); // Default active tab
 
   const tabs = [
@@ -18,21 +18,21 @@ export default function BottomNav() {
   ];
 
   // Update active tab when the screen changes
-  useFocusEffect(
-    React.useCallback(() => {
-      setActiveTab(route.name);
-    }, [route.name])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     setActiveTab(route.name);
+  //   }, [route.name])
+  // );
 
-  const handleTabPress = (tab) => {
-    setActiveTab(tab.screenName);
-    if (tab.screenName) {
-      navigation.navigate(tab.screenName);
-    } else if (tab.iconName === "grid-outline") {
-      console.log("Open Categories Modal");
-      // Handle Categories tab separately
-    }
-  };
+  // const handleTabPress = (tab) => {
+  //   setActiveTab(tab.screenName);
+  //   if (tab.screenName) {
+  //     navigation.navigate(tab.screenName);
+  //   } else if (tab.iconName === "grid-outline") {
+  //     console.log("Open Categories Modal");
+  //     // Handle Categories tab separately
+  //   }
+  // };
 
   return (
     <View className="flex-row w-[90%] h-20 justify-around items-center bg-gray-100 p-2 rounded-2xl shadow-lg shadow-purple-800">

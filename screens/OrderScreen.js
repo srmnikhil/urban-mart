@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import useOrderProcessing from '../hooks/useOrderProcessing'; // Import the hook
-import Geolocation from 'react-native-geolocation-service';
-// import { request, PERMISSIONS } from 'react-native-permissions'; // Add this for permissions
 
 const OrderScreen = () => {
     const { createOrder, orders, loadOrders } = useOrderProcessing();
