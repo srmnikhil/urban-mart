@@ -1,45 +1,67 @@
-import React, { useEffect, useState } from "react";
-import { View, Image, Dimensions } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence } from "react-native-reanimated";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Image, Dimensions, FlatList } from "react-native";
 
 const { width } = Dimensions.get("window");
 
 const banners = [
-  require("../assets/Banner1.png"), // Replace with your actual image paths
+  require("../assets/Banner1.png"),
   require("../assets/Banner2.jpg"),
+  require("../assets/Banner3.png"),
+  require("../assets/Banner4.jpg"),
 ];
 
 export default function Banner() {
-  const translateX = useSharedValue(0);
+  const flatListRef = useRef(null);
   const [index, setIndex] = useState(0);
+  const onScrollRef = useRef(false); // To track manual scroll  
 
+  // Handle auto-scroll
   useEffect(() => {
     const interval = setInterval(() => {
-      // Animate transition first
-      translateX.value = withSequence(
-        withTiming(-width, { duration: 400 }), // Slide out left
-        withTiming(width, { duration: 0 }),   // Instantly move right
-        withTiming(0, { duration: 400 })      // Slide in from right
-      );
+      if (!onScrollRef.current) {  // Only auto-scroll if not manually scrolling
+        const nextIndex = (index + 1) % banners.length;
+        flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+        setIndex(nextIndex);
+      }
+    }, 5000);
 
-      // Delay index change slightly for a smooth transition
-      setTimeout(() => {
-        setIndex((prevIndex) => (prevIndex + 1) % banners.length);
-      }, 400); // Update index after slide-out completes
-    }, 5000); // Change every 5 sec
+    return () => clearInterval(interval);
+  }, [index]);
 
-    return () => clearInterval(interval); // Cleanup
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+  // Handle user swipe
+  const handleScroll = (event) => {
+    const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+    setIndex(newIndex);
+  };
 
   return (
-    <View className="w-full h-40 items-center justify-center overflow-hidden">
-      <Animated.View className="w-[90%] h-40 rounded-xl overflow-hidden" style={animatedStyle}>
-        <Image source={banners[index]} className="w-full h-full" resizeMode="cover" />
-      </Animated.View>
+    <View className="h-50 mb-2 items-center justify-center overflow-hidden">
+      <FlatList
+        ref={flatListRef}
+        data={banners}
+        horizontal
+        pagingEnabled
+        keyExtractor={(_, i) => i.toString()}
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScroll} // Track index changes
+        renderItem={({ item }) => (
+          <View style={{ width, height: 160 }}>
+            <Image source={item} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+          </View>
+        )}
+      />
+
+      {/* Pagination Dots */}
+      <View className="absolute bottom-2 flex-row space-x-1">
+        {banners.map((_, i) => (
+          <View
+            key={i}
+            className={`w-2 h-2 rounded-full ${
+              i === index ? "bg-purple-800" : "bg-gray-400"
+            } mx-1`}
+          />
+        ))}
+      </View>
     </View>
   );
 }

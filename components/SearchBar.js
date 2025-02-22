@@ -2,16 +2,16 @@ import { useState } from "react";
 import { View, TextInput, TouchableOpacity, Keyboard } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-export default function SearchBar() {
-    const [searchText, setSearchText] = useState("");
-    
+export default function SearchBar({ searchText, setSearchText }) {
+
     const handleSearchSubmit = () => {
+        if (searchText.trim() === "") return;
         console.log("Search Query:", searchText);
         Keyboard.dismiss(); // Hide the keyboard
-      };
+    };
 
     return (
-        <View className="absolute top-16 mt-4 w-[90%] flex-row items-center bg-gray-100 rounded-full px-4 py-2 shadow-xl shadow-purple-800">
+        <View className="w-[90%] flex-row items-center bg-gray-100 rounded-full px-4 py-2 shadow-xl shadow-purple-800">
             {/* Search Icon */}
             <TouchableOpacity onPress={handleSearchSubmit}>
                 <MaterialIcons name="search" size={24} color="gray" />
@@ -22,7 +22,7 @@ export default function SearchBar() {
                 placeholder="Search here..."
                 placeholderTextColor="gray"
                 value={searchText}
-                onChangeText={(text) => setSearchText(text)}
+                onChangeText={setSearchText}
                 onSubmitEditing={handleSearchSubmit} // Submits on Enter key (Keyboard)
                 returnKeyType="search" // Changes keyboard return button to "Search"
             />

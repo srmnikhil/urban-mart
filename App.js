@@ -1,24 +1,24 @@
-import { Text, View, SafeAreaView } from 'react-native';
-import BottomNav from './components/BottomNav';
-import { StatusBar } from 'expo-status-bar';
-import SearchBar from './components/SearchBar';
-import Banner from './components/Banner';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from './screens/HomeScreen';
+import Profile from './screens/Profile';
+import YourOrders from './screens/YourOrders';
+import CartScreen from './screens/CartScreen';
+import OrderScreen from './screens/OrderScreen';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <GestureHandlerRootView>
-      <SafeAreaView className="flex-1">
-        <View className="items-center justify-center flex-1">
-          <SearchBar />
-          <Banner />
-          <View>
-            <Text>Welcome to the UrbanDrop App!</Text>
-          </View>
-          {/* <StatusBar /> */}
-          <BottomNav />
-        </View>
-      </SafeAreaView>
-    </GestureHandlerRootView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Cart" component={CartScreen} />
+        <Stack.Screen name="OrderScreen" component={OrderScreen} />
+        <Stack.Screen name="Orders" component={YourOrders} />
+        <Stack.Screen name="Profile" component={Profile} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
