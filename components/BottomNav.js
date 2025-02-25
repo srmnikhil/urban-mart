@@ -43,12 +43,12 @@ export default function BottomNav() {
           onPress={() => handleTabPress(tab)}
         >
           <View
-            className={`rounded-full flex items-center justify-center ${
-              activeTab === tab.screenName ? "bg-purple-200" : ""
-            } ${
+            className={`flex items-center justify-center ${
               tab.iconName === "grid-outline"
                 ? "w-24 h-24 mt-[-3.5rem] bg-gray-100 rounded-full"
-                : "w-16 h-16"
+                : "w-16 h-16 rounded-full"
+            } ${
+              activeTab === tab.screenName ? "bg-purple-200" : ""
             }`}
           >
             <Ionicons

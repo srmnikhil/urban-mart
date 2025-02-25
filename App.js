@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Alert, View, Text } from 'react-native';
+import { Alert, SafeAreaView, StatusBar, useColorScheme } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import * as Updates from 'expo-updates'; // Import expo-updates to check for updates
+import * as Updates from 'expo-updates';
 import HomeScreen from './screens/HomeScreen';
 import Profile from './screens/Profile';
 import YourOrders from './screens/YourOrders';
@@ -12,13 +12,17 @@ import OrderScreen from './screens/OrderScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  // useEffect to check for updates when the app opens
+  const colorScheme = useColorScheme(); // System theme detect karega (light ya dark mode)
+
   useEffect(() => {
     const checkForUpdates = async () => {
+      if (__DEV__) {
+        console.log("Skipping update check in development mode.");
+        return;
+      }
       try {
-        const update = await Updates.checkForUpdateAsync(); // Check if there's an update
+        const update = await Updates.checkForUpdateAsync();
         if (update.isAvailable) {
-          // If update is available, show the alert
           Alert.alert(
             'New Update Available',
             'A new update has arrived. Please update the app.',
@@ -26,9 +30,7 @@ export default function App() {
               {
                 text: 'OK',
                 onPress: async () => {
-                  // If user clicks 'OK', fetch the update
                   await Updates.fetchUpdateAsync();
-                  // Reload the app to apply the update
                   Updates.reloadAsync();
                 },
               },
@@ -40,18 +42,26 @@ export default function App() {
       }
     };
 
-    checkForUpdates(); // Run the update check on app load
-  }, []); // Empty dependency array ensures this runs only on first render
+    checkForUpdates();
+  }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Cart" component={CartScreen} />
-        <Stack.Screen name="OrderScreen" component={OrderScreen} />
-        <Stack.Screen name="Orders" component={YourOrders} />
-        <Stack.Screen name="Profile" component={Profile} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? 'black' : 'white' }}>
+      {/* Status bar dark/light mode ke hisaab se adjust hoga */}
+      <StatusBar 
+        backgroundColor={colorScheme === 'dark' ? 'black' : 'white'} 
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+      />
+      
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="OrderScreen" component={OrderScreen} />
+          <Stack.Screen name="Orders" component={YourOrders} />
+          <Stack.Screen name="Profile" component={Profile} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 }

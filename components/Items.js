@@ -1,6 +1,12 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native"; // Navigation hooks
 
-export default function Items({ product, addToCart }) {
+
+export default function Items({ product, cart, addToCart }) {
+  const navigation = useNavigation();
+
+  const isInCart = cart.some((item) => item.id === product.id);
+
   return (
     <View className="w-[47%] bg-purple-100 p-3 m-[6px] rounded-lg shadow-md">
       <Image
@@ -24,12 +30,12 @@ export default function Items({ product, addToCart }) {
 
       {/* Add to Cart Button */}
       <TouchableOpacity
-        className={`mt-2 ${product.inStock ? "bg-purple-700" : "bg-gray-500" } py-2 rounded-lg`}
-        onPress={() => addToCart(product)}
-        disabled={!product.inStock} // Disable if out of stock
+        className={`mt-2 ${isInCart ? "bg-green-600" : product.inStock ? "bg-purple-700" : "bg-gray-500"} py-2 rounded-lg`}
+        onPress={() => isInCart ? navigation.navigate("Cart") : addToCart(product)}
+        disabled={!product.inStock}
       >
         <Text className="text-white text-center font-bold">
-          {product.inStock ? "+Add to Cart" : "Available Soon" }
+          {isInCart ? "Go to Cart" : product.inStock ? "+ Add to Cart" : "Available Soon"}
         </Text>
       </TouchableOpacity>
     </View>

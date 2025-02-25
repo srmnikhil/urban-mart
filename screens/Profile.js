@@ -1,6 +1,5 @@
 import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons'; // Icons library
-import ProfileImage from "../assets/profile.png";
 
 export default function Profile({ navigation }) {
 
@@ -31,7 +30,7 @@ export default function Profile({ navigation }) {
             {/* Profile Picture with Edit Icon */}
             <View className="w-1/2 h-40 my-4 items-center relative">
                 <Image
-                    source={ProfileImage}
+                    source={require("../assets/profile.png")}
                     className="w-full h-36 rounded-full"
                     resizeMode="contain"
                 />

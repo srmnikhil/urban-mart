@@ -24,23 +24,22 @@ export default function HomeScreen() {
     return (
         <View className="w-full items-center flex-1 py-4">
             {/* Search Bar - Stays at the Top */}
-            <View className="z-10 my-2">
+            <View className="z-10">
                 <SearchBar searchText={searchText} setSearchText={setSearchText} />
             </View>
 
             {/* Scrollable Content */}
             <View className="flex-grow w-full">
-                {/* <Banner /> */}
                 <FlatList
                     data={filteredProducts}
-                    renderItem={({ item }) => <Items product={item} addToCart={addToCart} />}
+                    renderItem={({ item }) => <Items product={item} addToCart={addToCart} cart={cart} />}
                     keyExtractor={(item) => item.id}
                     numColumns={2} // Two items per row
                     ListHeaderComponent={
                         <>
                             <Banner />
                             {/* Category Filter Buttons - Just After Banner */}
-                            <View className="flex-row items-center mb-4 mt-2">
+                            <View className="flex-row items-center my-4">
                                 {/* Scrollable Filter Section */}
                                 <ScrollView horizontal className="flex-1">
                                     {categories.map((category) => (
@@ -57,7 +56,7 @@ export default function HomeScreen() {
                                 </ScrollView>
 
                                 {/* Vertical Separator Line */}
-                                <View className="h-8 w-[1px] bg-gray-300 mx-2" />
+                                <View className="h-8 w-[2px] bg-gray-300 mx-2" />
 
                                 {/* Fixed "Sort By" Button */}
                                 <TouchableOpacity

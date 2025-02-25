@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { View, TextInput, TouchableOpacity, Keyboard } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
