@@ -41,6 +41,14 @@
         "projectId": "e8e9d18c-687f-4820-84e0-f00c89c4205e"
       }
     },
+    "plugins":[
+      [
+        "expo-updates",
+        {
+          "username": "srmnikku"
+        }
+      ]
+    ],
     "runtimeVersion": {
       "policy": "appVersion"
     },

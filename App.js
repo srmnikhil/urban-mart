@@ -13,49 +13,49 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const colorScheme = useColorScheme(); // System theme detect karega (light ya dark mode)
+  const checkForUpdate = async () => {
+    try {
+      const update = await Updates.checkForUpdateAsync();
+      if (update.isAvailable) {
+        Alert.alert(
+          "Update Available",
+          "A new update is ready. Update now to get the latest features!",
+          [
+            {
+              text: "Update the App",
+              onPress: async () => {
+                await Updates.fetchUpdateAsync();
+                await Updates.reloadAsync();
+              },
+            },
+          ]
+        );
+      } else {
+        Alert.alert("You're Up-to-Date", "No updates available right now.", [
+          { text: "OK", style: "cancel" },
+        ]);
+      }
+    } catch (error) {
+      console.error("Error checking for updates:", error);
+      Alert.alert("Error", "Failed to check for updates.");
+    }
+  };
 
   useEffect(() => {
-    const checkForUpdates = async () => {
-      if (__DEV__) {
-        console.log("Skipping update check in development mode.");
-        return;
-      }
-      try {
-        const update = await Updates.checkForUpdateAsync();
-        if (update.isAvailable) {
-          Alert.alert(
-            'New Update Available',
-            'A new update has arrived. Please update the app.',
-            [
-              {
-                text: 'OK',
-                onPress: async () => {
-                  await Updates.fetchUpdateAsync();
-                  Updates.reloadAsync();
-                },
-              },
-            ]
-          );
-        }
-      } catch (error) {
-        console.error('Error checking for updates', error);
-      }
-    };
-
-    checkForUpdates();
+    checkForUpdate();
   }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? 'black' : 'white' }}>
       {/* Status bar dark/light mode ke hisaab se adjust hoga */}
-      <StatusBar 
-        backgroundColor={colorScheme === 'dark' ? 'black' : 'white'} 
-        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+      <StatusBar
+        backgroundColor={colorScheme === 'dark' ? 'black' : 'white'}
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
       />
-      
+
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} initialParams={{ checkForUpdate }} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="OrderScreen" component={OrderScreen} />
           <Stack.Screen name="Orders" component={YourOrders} />
