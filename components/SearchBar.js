@@ -18,7 +18,7 @@ export default function SearchBar({ searchText, setSearchText }) {
             {/* Input Field */}
             <TextInput
                 className="flex-1 px-3 text-base text-purple-800"
-                placeholder="Search here..."
+                placeholder="Search grocery here..."
                 placeholderTextColor="gray"
                 value={searchText}
                 onChangeText={setSearchText}
