@@ -1,7 +1,9 @@
 import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons'; // Icons library
+import Constants from 'expo-constants';
 
-export default function Profile({ navigation }) {
+export default function Profile({ navigation, manualCheckForUpdate }) {
+    const appVersion = Constants.expoConfig?.extra?.appVersion || 'N/A';
 
     // Function to handle logout confirmation
     const handleLogout = () => {
@@ -15,8 +17,13 @@ export default function Profile({ navigation }) {
         );
     };
 
+    // Function to check for updates
+    const handleCheckForUpdates = () => {
+        Alert.alert("Update Check", "You're using the latest version.");
+    };
+
     return (
-        <View className="flex-1 items-center bg-gray-100 py-6">
+        <View className="flex-1 items-center bg-white py-6">
 
             {/* Back to Home Button */}
             <TouchableOpacity
@@ -53,20 +60,30 @@ export default function Profile({ navigation }) {
 
                 {/* User Information with Properly Aligned Colons */}
                 <View className="mt-3">
-                    <UserDetail label="👤 Full Name" value="John Doe" />
+                    <UserDetail label="👤 Full Name" value="Nikhil Sharma" />
                     <UserDetail label="📞 Mobile" value="+91 9876543210" />
-                    <UserDetail label="📧 Email" value="johndoe@example.com" />
-                    <UserDetail label="🏠 Primary Address" value="123, Street Name" />
+                    <UserDetail label="📧 Email" value="test@gmail.com" />
+                    <UserDetail label="🏠 Primary Address" value="Mohalla Bajariya, Sahaswan, Budaun, Uttar Pradesh - 243638" />
                 </View>
             </View>
 
             {/* Buttons - Address, Orders */}
-            <MenuItem title="Your Address" />
+            <MenuItem title="Manage Addresses" />
             <MenuItem title="Your Orders" navigation={navigation} />
+            <MenuItem title="Help & Contact Us" />
+            <MenuItem title="FAQs" />
+
+            {/* App Version & Update Check */}
+            <View className="w-[90%] flex-row justify-between items-center mt-5 p-4 rounded-xl">
+                <Text className="text-lg font-semibold">App Version: {appVersion}</Text>
+                <TouchableOpacity onPress={manualCheckForUpdate} className="bg-teal-600 py-2 px-4 rounded-tl-3xl rounded-br-3xl">
+                    <Text className="text-white font-bold">Check for Update</Text>
+                </TouchableOpacity>
+            </View>
 
             {/* Logout Button with Confirmation */}
             <TouchableOpacity
-                className="w-32 mt-5 bg-red-600 py-3 rounded-tl-full rounded-br-full items-center active:bg-red-800"
+                className="w-32 mt-5 bg-red-600 py-3 rounded-tl-[3rem] rounded-br-[3rem] items-center"
                 onPress={handleLogout} // Show logout confirmation
             >
                 <Text className="text-white font-bold text-lg">Logout</Text>
@@ -78,9 +95,10 @@ export default function Profile({ navigation }) {
 // Reusable User Detail Row
 function UserDetail({ label, value }) {
     return (
-        <View className="flex-row justify-between items-center">
+        <View className="flex-row items-start">
             <Text className="text-lg font-semibold w-[40%]">{label}</Text>
-            <Text className="text-lg text-gray-800 w-[60%]">: {value}</Text>
+            <Text className="text-lg text-gray-800">: </Text>
+            <Text className="text-lg text-gray-800 flex-1">{value}</Text>
         </View>
     );
 }
@@ -90,7 +108,7 @@ function MenuItem({ title, navigation }) {
     return (
         <TouchableOpacity
             className="w-[90%] h-12 rounded-tl-[2rem] rounded-br-[2rem] mt-5 bg-purple-200 flex-row items-center justify-between px-5 active:bg-purple-300"
-            onPress={() => navigation.navigate("Orders")}
+            onPress={() => navigation?.navigate("Orders")}
         >
             <Text className="text-lg font-bold">{title}</Text>
             <Ionicons name="chevron-forward" size={22} color="black" />

@@ -1,111 +1,173 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import useOrderProcessing from '../hooks/useOrderProcessing'; // Import the hook
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { RadioButton } from 'react-native-paper';
+import useOrderProcessing from '../hooks/useOrderProcessing';
+import Button from '../components/Button';
+import useCart from "../hooks/useCart";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const OrderScreen = () => {
-    const { createOrder, orders, loadOrders } = useOrderProcessing();
-    const [location, setLocation] = useState(null);
-    const [locationError, setLocationError] = useState(null);
+    const route = useRoute();
+    const navigation = useNavigation();
+    const { cart, removeFromCart, emptyCart, setCart } = useCart();
+    const { createOrder, confirmOrder } = useOrderProcessing();
+    const [currentOrder, setCurrentOrder] = useState(null);
+    const [selectedAddress, setSelectedAddress] = useState('nikhil');
 
-    // Example cart data
-    const cartItems = [
-        { id: 1, name: 'Product 1', price: 500, quantity: 2 },
-        { id: 2, name: 'Product 2', price: 300, quantity: 1 },
+    const addresses = [
+        {
+            id: 'nikhil',
+            name: 'Nikhil Sharma',
+            address: 'Mohalla Bajariya, Sahaswan, \nBudaun, Uttar Pradesh - 243638',
+            phone: '9528465756'
+        },
+        {
+            id: 'hello',
+            name: 'Shubham Maheshwari',
+            address: 'Mohalla Bajariya, Sahaswan, Budaun, Uttar Pradesh - 243638',
+            phone: '8077476354'
+        }
     ];
 
     useEffect(() => {
-        loadOrders(); // Load orders when the screen is mounted
-    }, []);
+        if (route.params?.items) {
+            const newOrder = createOrder(route.params.items);
+            setCurrentOrder(newOrder);
+        }
+    }, [route.params?.items]);
 
-    // Function to request location permission
-    // const requestLocationPermission = async () => {
-    //     try {
-    //         const permissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-    //         if (permissionStatus === 'granted') {
-    //             console.log('Location permission granted');
-    //             return true;
-    //         } else {
-    //             console.log('Location permission denied');
-    //             return false;
-    //         }
-    //     } catch (error) {
-    //         console.log('Permission request error:', error);
-    //         return false;
-    //     }
-    // };
-
-    // Function to fetch the user's location
-    const fetchLocation = async () => {
-        const hasPermission = await requestLocationPermission(); // Request permission first
-        if (!hasPermission) {
-            Alert.alert('Permission Denied', 'Location permission is required to proceed.');
-            return;
+    const handleConfirmOrder = async () => {
+        if (!currentOrder || !Array.isArray(currentOrder.items) || currentOrder.items.length === 0) {
+            console.error("No valid items in the order");
+            return; // Early exit if the order is invalid or empty
         }
 
-        // Set a timeout to cancel location fetch after 5 seconds
-        const timeout = setTimeout(() => {
-            setLocationError('Location fetch timed out');
-            Alert.alert('Location Fetch Failed', 'Proceeding with order without location.');
-        }, 5000);
-
-        Geolocation.getCurrentPosition(
-            (position) => {
-                clearTimeout(timeout); // Clear the timeout if location is fetched
-                setLocation({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                });
-                setLocationError(null); // Clear any error if location is successfully fetched
-            },
-            (error) => {
-                clearTimeout(timeout);
-                setLocationError(error.message);
-                Alert.alert('Error', `Could not fetch location: ${error.message}`);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        const confirmedOrder = confirmOrder(currentOrder);
+        setCurrentOrder(confirmedOrder);
+        if(confirmedOrder.items.length > 1) {
+            await emptyCart();
+        } else {
+            removeFromCart(confirmedOrder.items[0].id);
+        }
+        Alert.alert(
+            "Success",
+            "Order Placed Successfully.",
+            [
+                {
+                    text: "Go to Home Page",
+                    onPress: () => navigation.navigate("Home") // ✅ Navigate only after clicking OK
+                }
+            ]
         );
-    };
 
-    const handlePlaceOrder = () => {
-        fetchLocation(); // Attempt to fetch location
-
-        // Wait a moment before proceeding with order creation
-        setTimeout(() => {
-            createOrder(cartItems, location); // Create order with location if fetched
-        }, 2000); // Giving some time before placing the order
+        // navigation.navigate('OrderConfirmationScreen', { orderId: confirmedOrder.orderId });
     };
 
     return (
-        <View className="p-4">
-            <Text className="text-2xl font-bold mb-4">Your Orders</Text>
-
+        <View className="flex-1 bg-white">
             <TouchableOpacity
-                className="bg-blue-500 rounded-lg p-3 mb-4"
-                onPress={handlePlaceOrder}
+                className="w-[90%] flex-row items-center my-4"
+                onPress={() => navigation.goBack()}
             >
-                <Text className="text-white text-center text-lg">Place Order</Text>
+                <Ionicons name="chevron-back" size={24} color="black" />
+                <Text className="text-lg font-semibold ml-2">Back to Home</Text>
             </TouchableOpacity>
+            <Text className="text-2xl left-4 italic font-bold mb-4">Order Details:</Text>
 
-            {orders.length > 0 && orders.map((order) => (
-                <View key={order.orderId} className="bg-white p-4 rounded-lg shadow mb-4">
-                    <Text className="text-lg font-semibold">Order ID: {order.orderId}</Text>
-                    <Text>Status: {order.status}</Text>
-                    <Text>Total: ₹{order.totalAmount}</Text>
-                    <Text>Date: {order.date}</Text>
+            <ScrollView className="p-4 flex-1">
+
+                {currentOrder ? (
+                    <View className="bg-purple-100 p-4 rounded-tl-[3rem] rounded-br-[3rem] shadow mb-4">
+                        <Text className="mt-2 text-xl font-semibold">Items:</Text>
+                        {currentOrder.items.map((item, index) => (
+                            <View key={index} className="flex-row items-center mt-2">
+                                <Image source={{ uri: item.image }} className="w-16 h-16 rounded-md mr-2" />
+                                <Text className="text-lg font-semibold italic">
+                                    • {item.name} x {item.quantity} - ₹{item.price * item.quantity}
+                                </Text>
+                            </View>
+                        ))}
+
+                        <View className="border-b border-gray-300 my-2" />
+
+                        <Text className="text-lg font-semibold mt-2">Amount Breakups:</Text>
+                        <View className="flex-row justify-between mt-1">
+                            <Text>Subtotal:</Text>
+                            <Text>₹{currentOrder.subtotal || "0.00"}</Text>
+                        </View>
+                        <View className="flex-row justify-between mt-1">
+                            <Text>Discount:</Text>
+                            <Text>-₹{currentOrder.discount || "0.00"}</Text>
+                        </View>
+                        <View className="flex-row justify-between mt-1">
+                            <Text>Delivery Charge:</Text>
+                            <Text>₹{currentOrder.deliveryCharge || "0.00"}</Text>
+                        </View>
+                        <View className="border-b border-gray-300 my-2" />
+                        <View className="flex-row justify-between">
+                            <Text className="text-lg font-semibold">Total Payable:</Text>
+                            <Text className="text-lg font-bold">₹{currentOrder.orderAmount}</Text>
+                        </View>
+
+                        <View className="flex-row justify-between">
+                            <Text className="text-lg font-semibold">Payment Method:</Text>
+                            <Text className="text-lg font-bold">Cash on Delivery</Text>
+                        </View>
+
+                        <Text className="mt-2 text-xs italic text-gray-500">
+                            * Online payments are not supported yet. We aim to build trust before enabling digital payments.
+                        </Text>
+                    </View>
+                ) : (
+                    <Text>No orders found.</Text>
+                )}
+
+                <View className="bg-purple-100 p-4 rounded-tl-[3rem] rounded-br-[3rem] shadow mb-4">
+                    <Text className="text-lg font-semibold">Select Delivery Address:</Text>
+                    {addresses.map((addr) => (
+                        <TouchableOpacity
+                            key={addr.id}
+                            className="flex-row items-center my-3"
+                            onPress={() => setSelectedAddress(addr.id)}
+                        >
+                            <RadioButton
+                                value={addr.id}
+                                status={selectedAddress === addr.id ? 'checked' : 'unchecked'}
+                            />
+                            <View className="flex-1">
+                                <Text className="font-semibold text-md">{addr.name}</Text>
+                                <Text className="text-md">{addr.address}</Text>
+                                {addr.phone && <Text className="text-md">{addr.phone}</Text>}
+                            </View>
+                            <TouchableOpacity onPress={() => alert("Edit Address Feature Coming Soon!")}>
+                                <Ionicons name="pencil" size={20} color="purple" />
+                            </TouchableOpacity>
+                        </TouchableOpacity>
+                    ))}
+
+                    <Button
+                        width="w-full"
+                        backgroundColor='bg-orange-300'
+                        buttonText="+ Add New Address"
+                        paddingY='py-2'
+                        onPress={() => alert("Add Address Feature Coming Soon!")}
+                    />
                 </View>
-            ))}
 
-            {/* Show location error or success */}
-            {locationError && (
-                <Text className="text-red-600 mt-2">Error: {locationError}</Text>
-            )}
-
-            {location && (
-                <Text className="text-green-600 mt-2">
-                    Location: {location.latitude}, {location.longitude}
-                </Text>
-            )}
+            </ScrollView>
+            <View className="sticky bottom-4 left-0 right-0 flex px-4 mt-8">
+                <Button
+                    width="w-full"
+                    buttonText="Confirm Order"
+                    onPress={handleConfirmOrder}
+                    rounded='[3rem]'
+                />
+            </View>
         </View>
+
     );
 };
 

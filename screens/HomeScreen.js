@@ -4,15 +4,53 @@ import useCart from "../hooks/useCart";
 import SearchBar from "../components/SearchBar";
 import Banner from "../components/Banner";
 import BottomNav from "../components/BottomNav";
-import Items from "../components/Items";
+import ItemCard from "../components/ItemCard";
 import products from "../data/dummyProducts";
 import { Ionicons } from "@expo/vector-icons"; // Import Icon for reload button
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Button from "../components/Button";
 
-export default function HomeScreen({ route }) {
-    const checkForUpdate = route.params?.checkForUpdate; // ✅ Ensure function exists
+export default function HomeScreen() {
     const [searchText, setSearchText] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const { cart, addToCart } = useCart();
+
+    const requestTeam = (product) => {
+        const message = `Hello UrbanMart Team, I’m a *user* of your app. I’m looking for *${searchText || product?.name}*. Please add it soon and notify me when available.`;
+        const phoneNumber = "+918077476354";
+        const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+        Linking.canOpenURL(url)
+            .then((supported) => {
+                if (supported) {
+                    Linking.openURL(url);
+                } else {
+                    Alert.alert("Error", "WhatsApp is not installed.");
+                }
+            })
+            .catch((err) => console.error("An error occurred", err));
+    }
+
+    const checkAsyncStorage = async () => {
+        try {
+            const allKeys = await AsyncStorage.getAllKeys();
+            const allData = await AsyncStorage.multiGet(allKeys);
+            console.log("📦 AsyncStorage Data:", allData);
+        } catch (error) {
+            console.error("❌ Error fetching AsyncStorage data", error);
+        }
+    };
+
+    // checkAsyncStorage();
+    const clearAsyncStorage = async () => {
+        try {
+            await AsyncStorage.clear();
+            console.log("✅ AsyncStorage cleared successfully!");
+        } catch (error) {
+            console.error("❌ Error clearing AsyncStorage", error);
+        }
+    };
+    // clearAsyncStorage();
 
     const categories = ["All", ...new Set(products.map((product) => product.category))];
 
@@ -24,14 +62,14 @@ export default function HomeScreen({ route }) {
     );
 
     return (
-        <View className="w-full items-center flex-1 py-4">
+        <View className="w-full bg-white items-center flex-1 py-4">
             {/* Search Bar with Reload Button */}
-            <View className="z-10 flex-row items-center w-full px-4">
+            <View className="z-10 flex-row items-center w-full px-4 mb-2">
                 <View className="flex-1">
                     <SearchBar searchText={searchText} setSearchText={setSearchText} />
                 </View>
-                <TouchableOpacity onPress={checkForUpdate} className="p-2 bg-gray-200 rounded-full">
-                    <Ionicons name="reload" size={24} color="black" />
+                <TouchableOpacity onPress={()=>{alert("Notification feature will come soon!")}}>
+                    <Ionicons name="notifications" size={24} color="purple" />
                 </TouchableOpacity>
             </View>
 
@@ -39,7 +77,7 @@ export default function HomeScreen({ route }) {
             <View className="flex-grow w-full">
                 <FlatList
                     data={filteredProducts}
-                    renderItem={({ item }) => <Items product={item} addToCart={addToCart} cart={cart} />}
+                    renderItem={({ item }) => <ItemCard product={item} addToCart={addToCart} cart={cart} requestTeam={requestTeam} />}
                     keyExtractor={(item) => item.id}
                     numColumns={2}
                     ListHeaderComponent={
@@ -50,7 +88,7 @@ export default function HomeScreen({ route }) {
                                     {categories.map((category) => (
                                         <TouchableOpacity
                                             key={category}
-                                            className={`px-5 py-2 mx-1 rounded-xl ${selectedCategory === category ? "bg-violet-950" : "bg-purple-800"
+                                            className={`px-5 py-2 mx-1 rounded-tl-3xl rounded-br-3xl ${selectedCategory === category ? "bg-violet-950" : "bg-purple-800"
                                                 }`}
                                             onPress={() => setSelectedCategory(category)}
                                         >
@@ -67,15 +105,15 @@ export default function HomeScreen({ route }) {
                                 <View className="h-8 w-[2px] bg-gray-300 mx-2" />
 
                                 <TouchableOpacity
-                                    className="px-4 py-2 rounded-xl border border-purple-600"
-                                    onPress={() => console.log("Sort By Pressed")}
+                                    className="px-4 py-2 rounded-tl-3xl rounded-br-3xl border border-purple-600"
+                                    onPress={() => alert("Sort By feature is coming Soon!")}
                                 >
                                     <Text className="text-purple-600 text-lg font-semibold">Sort By</Text>
                                 </TouchableOpacity>
                             </View>
 
                             {filteredProducts.length === 0 && (
-                                <View className="items-center my-6 p-4 bg-gray-100 rounded-lg shadow-md">
+                                <View className="items-center my-6 p-4 bg-purple-100 rounded-tl-[3rem] rounded-br-[3rem] border-2 border-purple-200 shadow-md">
                                     <Text className="text-gray-800 text-xl font-semibold text-center">
                                         Oops! Item Not Available 😔
                                     </Text>
@@ -86,26 +124,15 @@ export default function HomeScreen({ route }) {
                                     <Text className="text-gray-500 text-sm text-center mt-2 italic">
                                         — Thank you for choosing UrbanMart! 🛍️
                                     </Text>
-                                    <TouchableOpacity
-                                        className="mt-4 px-6 py-3 bg-green-600 rounded-lg"
-                                        onPress={() => {
-                                            const message = `Hello UrbanMart Team, I’m a user of your app. I’m looking for "${searchText}". Please add it soon and notify me when available.`;
-                                            const phoneNumber = "+919528465756";
-                                            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-                                            Linking.canOpenURL(url)
-                                                .then((supported) => {
-                                                    if (supported) {
-                                                        Linking.openURL(url);
-                                                    } else {
-                                                        Alert.alert("Error", "WhatsApp is not installed.");
-                                                    }
-                                                })
-                                                .catch((err) => console.error("An error occurred", err));
-                                        }}
-                                    >
-                                        <Text className="text-white text-lg font-semibold">Contact Team</Text>
-                                    </TouchableOpacity>
+                                    <Button
+                                        buttonText="Request Team"
+                                        onPress={requestTeam}
+                                        width="w-3/4"
+                                        paddingY="py-2"
+                                        backgroundColor="bg-teal-400"
+                                        extraClassName="mt-4"
+                                        iconName="logo-whatsapp"
+                                    />
                                 </View>
                             )}
                         </>

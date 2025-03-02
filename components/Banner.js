@@ -42,7 +42,7 @@ export default function Banner() {
   };
 
   return (
-    <View className="h-50 items-center justify-center rounded-xl overflow-hidden">
+    <View className="h-50 items-center justify-center rounded-br-[3rem] rounded-tl-[3rem] overflow-hidden">
       <FlatList
         ref={flatListRef}
         data={banners}

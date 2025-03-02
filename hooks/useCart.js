@@ -96,7 +96,19 @@ const useCart = () => {
         }
     };
 
-    return { cart, addToCart, removeFromCart, modifyQuantity };
+    const emptyCart = async () => {
+        try {
+            const updatedCart = [];
+            await AsyncStorage.setItem('cart', JSON.stringify(updatedCart)); // Update AsyncStor
+            setCart(updatedCart); // Update state
+            
+            console.log("Cart empty successfully");
+        } catch (error) {
+            console.error("Error empty cart", error);
+        }
+    };
+
+    return { cart, addToCart, removeFromCart, modifyQuantity, emptyCart, setCart };
 };
 
 export default useCart;
