@@ -43,7 +43,7 @@ const OrderItemCard = ({ order }) => {
             {/* Order Details */}
             <View className="flex-row justify-between">
                 <Text className="text-sm font-semibold">📦 {order.orderId}</Text>
-                <Text className="text-sm font-semibold">📅 {formatDate(order.date)}</Text>
+                <Text className="text-sm font-semibold">📅 {order.date}</Text>
             </View>
 
             {/* Ordered Items */}

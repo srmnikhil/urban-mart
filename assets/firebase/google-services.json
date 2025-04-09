@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "878414529791",
+    "project_id": "app-notification-70215",
+    "storage_bucket": "app-notification-70215.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878414529791:android:aee0a6b5ccf05256dc38ca",
+        "android_client_info": {
+          "package_name": "com.srmnikku.urbanmart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXnyHLmpGoQVk87xRo3o_bobqXT46GwNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

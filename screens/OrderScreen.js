@@ -25,11 +25,17 @@ const OrderScreen = () => {
             phone: '9528465756'
         },
         {
-            id: 'hello',
+            id: 'shubham',
             name: 'Shubham Maheshwari',
             address: 'Mohalla Bajariya, Sahaswan, Budaun, Uttar Pradesh - 243638',
             phone: '8077476354'
-        }
+        },
+        {
+            id: 'prince',
+            name: 'Prince Sharma',
+            address: 'Nishant Colony, Pavi Pushta, Loni Dehat, Uttar Pradesh - 201102',
+            phone: '9953655677'
+        },
     ];
 
     useEffect(() => {
