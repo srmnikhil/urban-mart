@@ -1,5 +1,6 @@
 import { View, FlatList, ScrollView, Text, TouchableOpacity, Alert, Linking } from "react-native";
 import { useState } from "react";
+import { useNavigation } from '@react-navigation/native';
 import useCart from "../hooks/useCart";
 import SearchBar from "../components/SearchBar";
 import Banner from "../components/Banner";
@@ -14,6 +15,7 @@ export default function HomeScreen() {
     const [searchText, setSearchText] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const { cart, addToCart } = useCart();
+    const navigation = useNavigation();
 
     const requestTeam = (product) => {
         const message = `Hello UrbanMart Team, I’m a *user* of your app. I’m looking for *${searchText || product?.name}*. Please add it soon and notify me when available.`;
@@ -68,7 +70,7 @@ export default function HomeScreen() {
                 <View className="flex-1">
                     <SearchBar searchText={searchText} setSearchText={setSearchText} />
                 </View>
-                <TouchableOpacity onPress={()=>{alert("Notification feature will come soon!")}}>
+                <TouchableOpacity onPress={()=>navigation.navigate("NotificationScreen")}>
                     <Ionicons name="notifications" size={24} color="purple" />
                 </TouchableOpacity>
             </View>

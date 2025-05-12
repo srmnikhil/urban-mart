@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import * as Notifications from 'expo-notifications';
 import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -7,7 +8,6 @@ import useOrderProcessing from '../hooks/useOrderProcessing';
 import Button from '../components/Button';
 import useCart from "../hooks/useCart";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 const OrderScreen = () => {
     const route = useRoute();
@@ -45,15 +45,26 @@ const OrderScreen = () => {
         }
     }, [route.params?.items]);
 
+    const sendOrderPlacedNotification = async () => {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Order Received! 🎉",
+                body: "Thank you for shopping with UrbanMart 🛒",
+                sound: "default",
+                priority: "high",
+            },
+            trigger: null, // null = send immediately
+        });
+    };
+
     const handleConfirmOrder = async () => {
         if (!currentOrder || !Array.isArray(currentOrder.items) || currentOrder.items.length === 0) {
             console.error("No valid items in the order");
             return; // Early exit if the order is invalid or empty
         }
-
         const confirmedOrder = confirmOrder(currentOrder);
         setCurrentOrder(confirmedOrder);
-        if(confirmedOrder.items.length > 1) {
+        if (confirmedOrder.items.length > 1) {
             await emptyCart();
         } else {
             removeFromCart(confirmedOrder.items[0].id);
@@ -68,14 +79,14 @@ const OrderScreen = () => {
                 }
             ]
         );
-
+        sendOrderPlacedNotification();
         // navigation.navigate('OrderConfirmationScreen', { orderId: confirmedOrder.orderId });
     };
 
     return (
-        <View className="flex-1 bg-white">
+        <View className="flex-1 bg-white ">
             <TouchableOpacity
-                className="w-[90%] flex-row items-center my-4"
+                className="w-[90%] flex-row items-center px-4 my-4"
                 onPress={() => navigation.goBack()}
             >
                 <Ionicons name="chevron-back" size={24} color="black" />

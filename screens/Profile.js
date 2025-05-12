@@ -17,14 +17,8 @@ export default function Profile({ navigation, manualCheckForUpdate }) {
         );
     };
 
-    // Function to check for updates
-    const handleCheckForUpdates = () => {
-        Alert.alert("Update Check", "You're using the latest version.");
-    };
-
     return (
         <View className="flex-1 items-center bg-white py-6">
-
             {/* Back to Home Button */}
             <TouchableOpacity
                 className="w-[90%] flex-row items-center mb-4"
@@ -68,8 +62,8 @@ export default function Profile({ navigation, manualCheckForUpdate }) {
             </View>
 
             {/* Buttons - Address, Orders */}
-            <MenuItem title="Manage Addresses" />
-            <MenuItem title="Your Orders" navigation={navigation} />
+            <MenuItem title="Manage Addresses" navigation={navigation} screenName="AddressScreen" />
+            <MenuItem title="Your Orders" navigation={navigation} screenName="Orders" />
             <MenuItem title="Help & Contact Us" />
             <MenuItem title="FAQs" />
 
@@ -104,14 +98,23 @@ function UserDetail({ label, value }) {
 }
 
 // Reusable Button Component
-function MenuItem({ title, navigation }) {
+function MenuItem({ title, navigation, screenName }) {
+    const handlePress = () => {
+        if (navigation && screenName) {
+            navigation.navigate(screenName);
+        } else {
+            console.log(`${title} clicked, but no navigation set.`);
+        }
+    };
+
     return (
         <TouchableOpacity
             className="w-[90%] h-12 rounded-tl-[2rem] rounded-br-[2rem] mt-5 bg-purple-200 flex-row items-center justify-between px-5 active:bg-purple-300"
-            onPress={() => navigation?.navigate("Orders")}
+            onPress={handlePress}
         >
             <Text className="text-lg font-bold">{title}</Text>
             <Ionicons name="chevron-forward" size={22} color="black" />
         </TouchableOpacity>
     );
 }
+
