@@ -57,7 +57,3 @@ No fancy chaos — just useful software done right.
 - Postman  
 - Git & GitHub  
 - Render / Vercel (for backend hosting)
-
----
-
-## 📂 Project Structure (Typical Mobile Setup)
