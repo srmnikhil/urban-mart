@@ -20,7 +20,7 @@ No fancy chaos — just useful software done right.
 
 ## ✨ Key Features  
 
-### 🛒 For Our Users
+### 🛒 For Users
 - Beautiful mobile UI for browsing products  
 - Search and category filtering  
 - Add to Cart & Checkout flow  
