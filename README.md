@@ -29,11 +29,6 @@ No fancy chaos — just useful software done right.
 - Smooth animations and transitions  
 - Responsive layout for all screen sizes  
 
-### 👨‍💼 Admin (If included in your app)  
-- Add / Edit / Delete products  
-- Manage inventory  
-- View customer orders  
-
 ---
 
 ## 🧠 Tech Stack  
