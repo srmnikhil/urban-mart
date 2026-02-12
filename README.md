@@ -34,7 +34,7 @@ No fancy chaos — just useful software done right.
 
 ## 🧠 Tech Stack  
 
-### 📱 Frontend (Mobile)
+### 📱 Frontend (Mobile app)
 - **React Native**
 - **Expo**
 - JavaScript  
