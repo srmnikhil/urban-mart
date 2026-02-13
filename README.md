@@ -8,7 +8,7 @@ Think of it as a kirana store that learned how to run on smartphones.
 
 ## 🎯 Purpose  
 
-UrbanMart was created to:
+Urban Mart was created to:
 - Make grocery shopping on remote areas  
 - Make grocery shopping simple on mobile  
 - Reduce dependency on bulky websites  
