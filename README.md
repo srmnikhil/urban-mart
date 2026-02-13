@@ -1,6 +1,6 @@
 # 📱 UrbanMart — Grocery Shopping Mobile App
 
-Urban Mart is a **modern mobile grocery application** that brings your neighborhood market to your pocket. Built with **React Native + Expo**, it delivers a smooth, native-like shopping experience with fast performance, clean UI, and real-world usability.
+UrbanMart is a **modern mobile grocery application** that brings your neighborhood market to your pocket. Built with **React Native + Expo**, it delivers a smooth, native-like shopping experience with fast performance, clean UI, and real-world usability.
 
 Think of it as a kirana store that learned how to run on smartphones.
 
