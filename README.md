@@ -32,7 +32,7 @@ No fancy chaos — just useful software done right.
 
 ---
 
-## 🧠 Used Tech Stack  
+## 🧠 Tech Stack  
 
 ### 📱 Frontend (Mobile app)
 - **React Native**
